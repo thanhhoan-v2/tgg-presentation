@@ -15,6 +15,90 @@
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
+/* Obsidian (default) — dark charcoal + gold */
+[data-theme="obsidian"] {
+  --bg: #0f0d0b;
+  --surface: #1c1917;
+  --surface-2: #292524;
+  --border: #3d3530;
+  --gold: #ca8a04;
+  --gold-light: #fbbf24;
+  --gold-muted: #92650a;
+  --text-primary: #fafaf9;
+  --text-secondary: #a8a29e;
+  --text-muted: #6b6460;
+}
+
+/* Midnight — deep navy + electric cyan */
+[data-theme="midnight"] {
+  --bg: #070d1a;
+  --surface: #0d1a2e;
+  --surface-2: #152340;
+  --border: #1e3358;
+  --gold: #22d3ee;
+  --gold-light: #67e8f9;
+  --gold-muted: #0e7490;
+  --text-primary: #f0f9ff;
+  --text-secondary: #94a3b8;
+  --text-muted: #4e6a8a;
+}
+
+/* Forest — deep green + lime */
+[data-theme="forest"] {
+  --bg: #060e09;
+  --surface: #0c1a10;
+  --surface-2: #142619;
+  --border: #1e3d26;
+  --gold: #4ade80;
+  --gold-light: #86efac;
+  --gold-muted: #166534;
+  --text-primary: #f0fdf4;
+  --text-secondary: #86a890;
+  --text-muted: #4a6b53;
+}
+
+/* Crimson — near-black + vivid red */
+[data-theme="crimson"] {
+  --bg: #0d0608;
+  --surface: #1a0c0f;
+  --surface-2: #261217;
+  --border: #3d1a20;
+  --gold: #f43f5e;
+  --gold-light: #fb7185;
+  --gold-muted: #9f1239;
+  --text-primary: #fff1f2;
+  --text-secondary: #a89298;
+  --text-muted: #6b4a50;
+}
+
+/* Ivory — warm cream + espresso (light theme) */
+[data-theme="ivory"] {
+  --bg: #faf7f2;
+  --surface: #f0ebe2;
+  --surface-2: #e4ddd1;
+  --border: #d0c8b8;
+  --gold: #78350f;
+  --gold-light: #92400e;
+  --gold-muted: #b45309;
+  --text-primary: #1c1410;
+  --text-secondary: #57473a;
+  --text-muted: #8a7060;
+}
+
+/* Slate — cool charcoal + soft violet */
+[data-theme="slate"] {
+  --bg: #0a0b10;
+  --surface: #13151e;
+  --surface-2: #1c1f2e;
+  --border: #2a2e42;
+  --gold: #a78bfa;
+  --gold-light: #c4b5fd;
+  --gold-muted: #5b21b6;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #4a506b;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -142,6 +226,17 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
   pointer-events: none;
   opacity: 0.4;
+}
+
+@keyframes popoverIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 @keyframes loadBar {

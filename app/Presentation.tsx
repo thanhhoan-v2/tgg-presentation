@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import ThemePicker, { type ThemeId } from "./ThemePicker";
 
 const SLIDES = [
   {
@@ -54,6 +55,7 @@ export default function Presentation() {
   const [isAnimating, setIsAnimating] = useState(false);
   const [slideKey, setSlideKey] = useState(0);
   const [showScript, setShowScript] = useState(false);
+  const [theme, setTheme] = useState<ThemeId>("obsidian");
 
   const goTo = useCallback(
     (next: number, direction: Direction) => {
@@ -85,6 +87,7 @@ export default function Presentation() {
   return (
     <div
       className="relative flex h-full w-full flex-col overflow-hidden noise-overlay"
+      data-theme={theme}
       style={{ background: "var(--bg)" }}
     >
       {/* Grid background */}
@@ -107,7 +110,7 @@ export default function Presentation() {
           className="text-xs font-medium tracking-[0.15em] uppercase"
           style={{ color: "var(--text-muted)" }}
         >
-          Harness Engineering
+          By Thanh Hoàn
         </span>
         <div className="flex items-center gap-2">
           {SLIDES.map((_, i) => (
@@ -123,12 +126,15 @@ export default function Presentation() {
             />
           ))}
         </div>
-        <span
-          className="text-xs font-medium tracking-widest"
-          style={{ color: "var(--text-muted)" }}
-        >
-          {String(current + 1).padStart(2, "0")} / {SLIDES.length}
-        </span>
+        <div className="flex items-center gap-3">
+          <span
+            className="text-xs font-medium tracking-widest"
+            style={{ color: "var(--text-muted)" }}
+          >
+            {String(current + 1).padStart(2, "0")} / {SLIDES.length}
+          </span>
+          <ThemePicker theme={theme} onChange={setTheme} />
+        </div>
       </header>
 
       {/* Slide area: blank during transition, then fade in new slide */}
@@ -192,16 +198,8 @@ export default function Presentation() {
         >
           {SLIDES[current].label}
         </span>
-        <span className="flex items-center gap-4 text-xs" style={{ color: "var(--text-muted)" }}>
-          <span>left / right to navigate</span>
-          <span
-            style={{
-              color: showScript ? "var(--gold)" : "var(--text-muted)",
-              transition: "color 200ms ease",
-            }}
-          >
-            s: {showScript ? "hide" : "show"} script
-          </span>
+        <span className="text-xs" style={{ color: "var(--text-muted)" }}>
+          left / right to navigate
         </span>
       </footer>
     </div>
