@@ -131,18 +131,31 @@ export default function Presentation() {
         >
           Harness Engineering
         </span>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           {SLIDES.map((_, i) => (
-            <div
+            <button
               key={i}
+              onClick={() => goTo(i, i > current ? "forward" : "backward")}
+              className="cursor-pointer"
+              aria-label={`Go to slide ${i + 1}`}
               style={{
-                width: i === current ? 24 : 6,
-                height: 6,
-                borderRadius: 3,
-                background: i === current ? "var(--gold)" : "var(--border)",
-                transition: "width 300ms var(--ease-out), background 300ms ease",
+                width: 28,
+                height: 28,
+                borderRadius: 8,
+                border: "1px solid",
+                borderColor: i === current ? "var(--gold-muted)" : "var(--border)",
+                background: i === current ? "var(--surface)" : "transparent",
+                color: i === current ? "var(--gold)" : "var(--text-muted)",
+                fontSize: 11,
+                fontWeight: i === current ? 700 : 400,
+                transition: "border-color 150ms ease, background 150ms ease, color 150ms ease",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
-            />
+            >
+              {i + 1}
+            </button>
           ))}
         </div>
         <div className="flex items-center gap-3">
