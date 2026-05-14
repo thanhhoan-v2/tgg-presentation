@@ -126,7 +126,7 @@ export default function Presentation() {
         style={{ borderBottom: "1px solid var(--border)" }}
       >
         <span
-          className="text-xs font-medium tracking-[0.15em] uppercase"
+          className="hidden sm:inline text-xs font-medium tracking-[0.15em] uppercase"
           style={{ color: "var(--text-muted)" }}
         >
           Harness Engineering
