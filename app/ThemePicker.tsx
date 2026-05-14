@@ -185,7 +185,7 @@ export default function ThemePicker({ theme, onChange }: Props) {
           }}
         />
         <span
-          className="text-xs font-medium tracking-wide"
+          className="hidden text-xs font-medium tracking-wide sm:inline"
           style={{ color: "var(--text-muted)" }}
         >
           {current.label}

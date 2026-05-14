@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import ThemePicker, { type ThemeId } from "./ThemePicker";
 import FontPicker, { type FontId, FONT_FAMILIES } from "./FontPicker";
 
@@ -90,10 +90,24 @@ export default function Presentation() {
     return () => window.removeEventListener("keydown", handleKey);
   }, [current, goTo]);
 
+  // Swipe gesture handling
+  const touchStartX = useRef(0);
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      diff > 0 ? goTo(current + 1, "forward") : goTo(current - 1, "backward");
+    }
+  };
+
   return (
     <div
       className="relative flex h-full w-full flex-col overflow-hidden noise-overlay"
       style={{ background: "var(--bg)", fontFamily: FONT_FAMILIES[font] }}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       {/* Grid background */}
       <div
@@ -108,7 +122,7 @@ export default function Presentation() {
 
       {/* Top bar */}
       <header
-        className="relative z-10 flex items-center justify-between px-10 py-5"
+        className="relative z-10 flex items-center justify-between px-4 py-3 sm:px-10 sm:py-5"
         style={{ borderBottom: "1px solid var(--border)" }}
       >
         <span
@@ -195,7 +209,7 @@ export default function Presentation() {
 
       {/* Bottom bar */}
       <footer
-        className="relative z-10 flex items-center justify-between px-10 py-4"
+        className="relative z-10 flex items-center justify-between px-4 py-3 sm:px-10 sm:py-4"
         style={{ borderTop: "1px solid var(--border)" }}
       >
         <span
@@ -204,8 +218,11 @@ export default function Presentation() {
         >
           {SLIDES[current].label}
         </span>
-        <span className="text-xs" style={{ color: "var(--text-muted)" }}>
+        <span className="hidden text-xs sm:block" style={{ color: "var(--text-muted)" }}>
           left / right to navigate
+        </span>
+        <span className="text-xs sm:hidden" style={{ color: "var(--text-muted)" }}>
+          swipe to navigate
         </span>
       </footer>
     </div>
@@ -216,7 +233,7 @@ export default function Presentation() {
 
 function SlideLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-1 flex-col items-center justify-center px-20 py-12">
+    <div className="flex flex-1 flex-col items-center justify-center overflow-y-auto px-5 py-6 sm:px-20 sm:py-12">
       {children}
     </div>
   );
@@ -253,7 +270,7 @@ function Heading({
 function Divider() {
   return (
     <div
-      className="fade-up fade-up-3 my-8 h-px w-16"
+      className="fade-up fade-up-3 my-4 h-px w-16 sm:my-8"
       style={{ background: "var(--gold-muted)" }}
     />
   );
@@ -335,13 +352,13 @@ function Slide1() {
     <SlideLayout>
       <div className="flex w-full max-w-3xl flex-col items-center">
         <GoldLabel>Harness Engineering</GoldLabel>
-        <Heading className="text-5xl">
+        <Heading className="text-3xl sm:text-5xl">
           It&apos;s not the model.{" "}
           <span className="gold-shimmer">It&apos;s the harness.</span>
         </Heading>
         <Divider />
         <p
-          className="fade-up fade-up-4 max-w-xl text-center text-lg leading-relaxed"
+          className="fade-up fade-up-4 max-w-xl text-center text-sm leading-relaxed sm:text-lg"
           style={{ color: "var(--text-secondary)" }}
         >
           The practice of designing the entire environment surrounding an AI model:
@@ -392,7 +409,7 @@ function Slide2() {
     <SlideLayout>
       <div className="flex w-full max-w-3xl flex-col items-center">
         <GoldLabel>Evolution</GoldLabel>
-        <Heading className="text-4xl">
+        <Heading className="text-2xl sm:text-4xl">
           Three eras of AI engineering
         </Heading>
         <Divider />
@@ -458,7 +475,7 @@ function Slide3() {
     <SlideLayout>
       <div className="flex w-full max-w-3xl flex-col items-center">
         <GoldLabel>Why It Matters</GoldLabel>
-        <Heading className="text-4xl">
+        <Heading className="text-2xl sm:text-4xl">
           Interface design alone improved performance by{" "}
           <span className="gold-shimmer">64%</span>
         </Heading>
@@ -472,7 +489,7 @@ function Slide3() {
           performance gain.
         </p>
 
-        <div className="fade-up fade-up-5 grid w-full grid-cols-3 gap-4">
+        <div className="fade-up fade-up-5 grid w-full grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
           {[
             { label: "Limited search results", detail: "Max 50 items to prevent context flooding" },
             { label: "Line-numbered file views", detail: "100 lines per view with index anchors" },
@@ -520,7 +537,7 @@ function Slide4() {
     <SlideLayout>
       <div className="flex w-full max-w-3xl flex-col items-center">
         <GoldLabel>Core Components</GoldLabel>
-        <Heading className="text-4xl">
+        <Heading className="text-2xl sm:text-4xl">
           What a harness is made of
         </Heading>
         <Divider />
@@ -580,7 +597,7 @@ function Slide5() {
     <SlideLayout>
       <div className="flex w-full max-w-3xl flex-col items-center">
         <GoldLabel>Failure Patterns</GoldLabel>
-        <Heading className="text-4xl">
+        <Heading className="text-2xl sm:text-4xl">
           Why agents fail, and how the harness fixes them
         </Heading>
         <Divider />
@@ -588,7 +605,7 @@ function Slide5() {
           {patterns.map((p, i) => (
             <div
               key={i}
-              className="grid grid-cols-3 gap-4 rounded-xl p-5"
+              className="grid grid-cols-1 gap-2 rounded-xl p-4 sm:grid-cols-3 sm:gap-4 sm:p-5"
               style={{
                 background: "var(--surface)",
                 border: "1px solid var(--border)",
@@ -651,10 +668,10 @@ function Slide6() {
     <SlideLayout>
       <div className="flex w-full max-w-3xl flex-col items-center">
         <GoldLabel>Key Takeaway</GoldLabel>
-        <Heading className="mb-4 text-6xl">
+        <Heading className="mb-2 text-4xl sm:mb-4 sm:text-6xl">
           <span className="gold-shimmer">Model is commodity.</span>
         </Heading>
-        <Heading className="text-6xl">Harness is product.</Heading>
+        <Heading className="text-4xl sm:text-6xl">Harness is product.</Heading>
         <Divider />
         <p
           className="fade-up fade-up-4 max-w-lg text-center text-base leading-relaxed"
@@ -665,7 +682,7 @@ function Slide6() {
           around it.
         </p>
 
-        <div className="fade-up fade-up-5 mt-8 grid w-full grid-cols-2 gap-4">
+        <div className="fade-up fade-up-5 mt-4 grid w-full grid-cols-1 gap-3 sm:mt-8 sm:grid-cols-2 sm:gap-4">
           {[
             { label: "Context Engineering", scope: "What should the agent see?" },
             { label: "Harness Engineering", scope: "How does the entire system operate?" },
