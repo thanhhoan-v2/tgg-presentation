@@ -147,7 +147,7 @@ export default function Presentation() {
         </div>
         <div className="flex items-center gap-3">
           <span
-            className="text-xs font-medium tracking-widest"
+            className="hidden text-xs font-medium tracking-widest sm:inline"
             style={{ color: "var(--text-muted)" }}
           >
             {String(current + 1).padStart(2, "0")} / {SLIDES.length}
@@ -358,7 +358,7 @@ function Slide1() {
         </Heading>
         <Divider />
         <p
-          className="fade-up fade-up-4 max-w-xl text-center text-sm leading-relaxed sm:text-lg"
+          className="fade-up fade-up-4 max-w-xl text-center text-sm leading-relaxed sm:text-lg mb-2"
           style={{ color: "var(--text-secondary)" }}
         >
           The practice of designing the entire environment surrounding an AI model:
