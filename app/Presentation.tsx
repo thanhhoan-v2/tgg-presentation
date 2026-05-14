@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import ThemePicker, { type ThemeId } from "./ThemePicker";
+import FontPicker, { type FontId, FONT_FAMILIES } from "./FontPicker";
 
 const SLIDES = [
   {
@@ -56,6 +57,7 @@ export default function Presentation() {
   const [slideKey, setSlideKey] = useState(0);
   const [showScript, setShowScript] = useState(false);
   const [theme, setTheme] = useState<ThemeId>("obsidian");
+  const [font, setFont] = useState<FontId>("dm-sans");
 
   const goTo = useCallback(
     (next: number, direction: Direction) => {
@@ -91,7 +93,7 @@ export default function Presentation() {
   return (
     <div
       className="relative flex h-full w-full flex-col overflow-hidden noise-overlay"
-      style={{ background: "var(--bg)" }}
+      style={{ background: "var(--bg)", fontFamily: FONT_FAMILIES[font] }}
     >
       {/* Grid background */}
       <div
@@ -113,7 +115,7 @@ export default function Presentation() {
           className="text-xs font-medium tracking-[0.15em] uppercase"
           style={{ color: "var(--text-muted)" }}
         >
-          By Thanh Hoàn
+          Harness Engineering
         </span>
         <div className="flex items-center gap-2">
           {SLIDES.map((_, i) => (
@@ -136,6 +138,7 @@ export default function Presentation() {
           >
             {String(current + 1).padStart(2, "0")} / {SLIDES.length}
           </span>
+          <FontPicker font={font} onChange={setFont} />
           <ThemePicker theme={theme} onChange={setTheme} />
         </div>
       </header>
