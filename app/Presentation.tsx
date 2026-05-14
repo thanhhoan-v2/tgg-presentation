@@ -71,6 +71,10 @@ export default function Presentation() {
   );
 
   useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
+
+  useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight" || e.key === "ArrowDown") {
         goTo(current + 1, "forward");
@@ -87,7 +91,6 @@ export default function Presentation() {
   return (
     <div
       className="relative flex h-full w-full flex-col overflow-hidden noise-overlay"
-      data-theme={theme}
       style={{ background: "var(--bg)" }}
     >
       {/* Grid background */}

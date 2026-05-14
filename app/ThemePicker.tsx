@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 export type ThemeId =
   | "obsidian"
@@ -26,90 +27,46 @@ interface Props {
 
 export default function ThemePicker({ theme, onChange }: Props) {
   const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const [popoverPos, setPopoverPos] = useState({ top: 0, right: 0 });
+  const btnRef = useRef<HTMLButtonElement>(null);
   const current = THEMES.find((t) => t.id === theme)!;
+
+  // Position popover relative to viewport so it escapes overflow:hidden
+  const openPopover = () => {
+    if (btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect();
+      setPopoverPos({
+        top: rect.bottom + 8,
+        right: window.innerWidth - rect.right,
+      });
+    }
+    setOpen(true);
+  };
 
   useEffect(() => {
     if (!open) return;
     const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
+      const target = e.target as Node;
+      if (btnRef.current && !btnRef.current.contains(target)) {
+        // Also check if click is inside the portal popover
+        const popover = document.getElementById("theme-popover");
+        if (!popover || !popover.contains(target)) {
+          setOpen(false);
+        }
       }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, [open]);
 
-  return (
-    <div ref={ref} className="relative">
-      {/* Trigger button */}
-      <button
-        onClick={() => setOpen((v) => !v)}
-        aria-label="Change theme"
-        className="cursor-pointer"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 6,
-          padding: "5px 10px",
-          borderRadius: 8,
-          border: "1px solid var(--border)",
-          background: "var(--surface)",
-          transition: "border-color 150ms ease, background 150ms ease",
-        }}
-        onMouseEnter={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--gold-muted)";
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)";
-        }}
-      >
-        {/* Current theme swatch */}
-        <span
-          style={{
-            display: "inline-block",
-            width: 10,
-            height: 10,
-            borderRadius: "50%",
-            background: current.accent,
-            boxShadow: `0 0 0 2px ${current.bg}, 0 0 0 3px ${current.accent}40`,
-          }}
-        />
-        <span
-          className="text-xs font-medium tracking-wide"
-          style={{ color: "var(--text-muted)" }}
-        >
-          {current.label}
-        </span>
-        {/* Chevron */}
-        <svg
-          width="10"
-          height="10"
-          viewBox="0 0 10 10"
-          fill="none"
-          style={{
-            color: "var(--text-muted)",
-            transform: open ? "rotate(180deg)" : "rotate(0deg)",
-            transition: "transform 150ms ease",
-          }}
-        >
-          <path
-            d="M2 3.5L5 6.5L8 3.5"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </button>
-
-      {/* Popover */}
-      {open && (
+  const popover = open
+    ? createPortal(
         <div
+          id="theme-popover"
           style={{
-            position: "absolute",
-            top: "calc(100% + 8px)",
-            right: 0,
+            position: "fixed",
+            top: popoverPos.top,
+            right: popoverPos.right,
             background: "var(--surface)",
             border: "1px solid var(--border)",
             borderRadius: 12,
@@ -121,7 +78,7 @@ export default function ThemePicker({ theme, onChange }: Props) {
             boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
             transformOrigin: "top right",
             animation: "popoverIn 150ms var(--ease-out) forwards",
-            zIndex: 50,
+            zIndex: 9999,
           }}
         >
           {THEMES.map((t) => (
@@ -188,8 +145,72 @@ export default function ThemePicker({ theme, onChange }: Props) {
               )}
             </button>
           ))}
-        </div>
-      )}
-    </div>
+        </div>,
+        document.body
+      )
+    : null;
+
+  return (
+    <>
+      <button
+        ref={btnRef}
+        onClick={() => (open ? setOpen(false) : openPopover())}
+        aria-label="Change theme"
+        className="cursor-pointer"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 6,
+          padding: "5px 10px",
+          borderRadius: 8,
+          border: "1px solid var(--border)",
+          background: "var(--surface)",
+          transition: "border-color 150ms ease, background 150ms ease",
+        }}
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--gold-muted)";
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)";
+        }}
+      >
+        <span
+          style={{
+            display: "inline-block",
+            width: 10,
+            height: 10,
+            borderRadius: "50%",
+            background: current.accent,
+            boxShadow: `0 0 0 2px ${current.bg}, 0 0 0 3px ${current.accent}40`,
+          }}
+        />
+        <span
+          className="text-xs font-medium tracking-wide"
+          style={{ color: "var(--text-muted)" }}
+        >
+          {current.label}
+        </span>
+        <svg
+          width="10"
+          height="10"
+          viewBox="0 0 10 10"
+          fill="none"
+          style={{
+            color: "var(--text-muted)",
+            transform: open ? "rotate(180deg)" : "rotate(0deg)",
+            transition: "transform 150ms ease",
+          }}
+        >
+          <path
+            d="M2 3.5L5 6.5L8 3.5"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </button>
+      {popover}
+    </>
   );
 }
